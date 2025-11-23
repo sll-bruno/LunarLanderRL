@@ -94,7 +94,7 @@ class LunarLanderEnv:
             case 2:
                 force = (-self.side_thrust,0)
             case 3:
-                force = (0, self.main_thrust, self)
+                force = (0, self.main_thrust)
 
         force_x, force_y = force
 
@@ -128,22 +128,23 @@ class LunarLanderEnv:
             Força nos motores laterais: - 0.5
         """
         
-        if self.y <= 0.0 and (abs(self.x) <= 1.5) and (abs(self.vx) <= 0.5) and (abs(self.vy) <= 0.5): 
-            # Pouso suave
-            done = True
-            r += 100
-        elif self.y <= 0.0 and (abs(self.x) > 1.5) or (abs(self.vx) > 0.5) or (abs(self.vy) > 0.5):
-            # Crash
-            done = True
-            r -= 1000
+        if self.y <= 0.0:
+            if  (abs(self.x) <= 1.5) and (abs(self.vx) <= 0.5) and (abs(self.vy) <= 0.5): 
+                # Pouso suave
+                done = True
+                r += 100
+            elif (abs(self.x) > 1.5) or (abs(self.vx) > 0.5) or (abs(self.vy) > 0.5):
+                # Crash
+                done = True
+                r -= 200
         elif abs(self.x) >= 4.5:
             done = True
             r -= 100
             # Out of Limits
 
-        s = get_state()
+        s = self.get_state()
 
-        return self.state, r, done, info
+        return s, r, done
 
     def get_state(self):
         return np.array([self.x, self.y, self.vx, self.vy])
